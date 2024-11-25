@@ -1,6 +1,13 @@
 {
   "users": [
     {
+      "id": "0",
+      "nickname": "admin",
+      "email": "a",
+      "password" : "a",
+      "profileImgPath": "../style/춘식.png"
+    },
+    {
       "id": "1",
       "nickname": "더미작성자1",
       "email": "example@example.com",

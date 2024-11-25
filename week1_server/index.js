@@ -8,7 +8,7 @@ app.set("port", process.env.PORT || 3030); // 포트 설정
 app.set("host", process.env.HOST || "0.0.0.0"); // 아이피 설정
 
 // 보안 미들웨어
-import helmet from 'helmet';
+import helmet from 'helmet'; // helmet, cors와 같은 설치형 미들웨어는 내부적으로 요청을 완전히 처리하거나 자동으로 next()를 호출하도록 설계
 app.use(helmet());
 // JSON 파싱 미들웨어
 app.use(express.json());
@@ -22,9 +22,9 @@ app.use(cors({
   credentials: true, // 쿠키 허용
 }));
 // multipart/form-data 처리
-import multer from 'multer';
-const upload = multer();
-app.use(upload.any());
+// import multer from 'multer';
+// const upload = multer();
+// app.use(upload.any());
 // 요청 로깅 미들웨어
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url} - Body:`, req.body); // 요청 메서드, URL, Body 출력
@@ -62,7 +62,6 @@ app.get('/data.json', (req, res) => {
         ),
     );
 });
-
 
 app.use('/api', apiRouter);
 

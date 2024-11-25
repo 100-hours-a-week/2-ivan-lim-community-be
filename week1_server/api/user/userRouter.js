@@ -20,10 +20,11 @@ const storage = multer.diskStorage({
         const uploadPath = join(__dirname, '../../uploadedImg');
         cb(null, uploadPath);
     },
+    // fix 필요: 확장자명 다른 기존 프로필 이미지 삭제 필요할 수도?
     filename: (req, file, cb) => {
         const ext = extname(file.originalname); // 원래 파일 확장자 추출
         // 원하는 파일 이름 지정
-        cb(null, `${req.params.user_id}'s profileimg${ext}`);    
+        cb(null, `${req.params.user_id}'s profileimg${ext}`);
     }
 });
 

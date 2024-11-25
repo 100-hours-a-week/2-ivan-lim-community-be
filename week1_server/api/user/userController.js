@@ -1,4 +1,5 @@
 import {nicknameValidChk, passwordValidChk} from '../function/validCheck.js';
+import path from 'path';
 // 닉네임 중복체크 API
 // GET /api/users/checkNickname
 export const checkNickname = async (req, res) => {
@@ -125,7 +126,6 @@ export const memInfoModi = async(req, res) => {
         const user_id = req.params.user_id;
         const user = data.users.find(user => user.id === user_id);
 
-        console.log(user);
         if (!user) {
             return res.status(404).json({
                 message: "user_not_found",
@@ -143,13 +143,14 @@ export const memInfoModi = async(req, res) => {
             });
         }
 
-        response = await checkNickname(newNickname);
-        if (response.data.duplication) {
-            return res.status(409).json({
-                message: "already_exist_nickname",
-                data: null
-            });
-        }
+        // fix 필요: 닉네임 중복 검사 API 호출을 함수로 빼서 사용해야함.
+        // response = await checkNickname(newNickname);
+        // if (response.data.duplication) {
+        //     return res.status(409).json({
+        //         message: "already_exist_nickname",
+        //         data: null
+        //     });
+        // }
 
         // 프로필 이미지 유효성 검사는 어케 하징?
     
@@ -167,7 +168,7 @@ export const memInfoModi = async(req, res) => {
         if (file) {
             profileImgPath = path.join(file.destination, file.filename); // 파일 경로
             console.log(`File Path: ${profileImgPath}`);
-            // 여기서 파일 경로를 데이터베이스에 저장하거나 다른 작업 수행
+            // add 필요: 여기서 파일 경로를 데이터베이스에 저장하거나 다른 작업 수행
         }
 
         // 2. 데이터베이스 업데이트 로직 (예제)
