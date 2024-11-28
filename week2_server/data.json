@@ -1,0 +1,165 @@
+{
+  "users": [
+    {
+      "id": "0",
+      "nickname": "admin",
+      "email": "a",
+      "password" : "a",
+      "profileImgPath": "../style/춘식.png"
+    },
+    {
+      "id": "1",
+      "nickname": "더미작성자1",
+      "email": "example@example.com",
+      "password" : "Abc1234!",
+      "profileImgPath": "../style/춘식.png"
+    },
+    {
+      "id": "2",
+      "nickname": "더미 작성자 2",
+      "email": "test@test.com",
+      "password" : "Abc1234!",
+      "profileImgPath": "../style/귤춘식.jpg"
+    }
+  ],
+  "posts": [
+    {
+      "id": "1",
+      "writerId": "1",
+      "title": "제목1",
+      "content": "무엇을 얘기할까요? 아무말이라면, 삶은 항상 놀라운 모험이라고 생각합니다. 우리는 매일 새로운 경험을 하고 배우며 성장합니다. 때로는 어려움과 도전이 있지만, 그것들이 우리를 더 강하고 지혜롭게 만듭니다. 또한 우리는 주변의 사람들과 연결되며 사랑과 지지를 받습니다. 그래서 우리의 삶은 소중하고 의미가 있습니다. 자연도 아름다운 이야기입니다. 우리 주변의 자연은 끝없는 아름다움과 신비로움을 담고 있습니다. 산, 바다, 숲, 하늘 등 모든 것이 우리를 놀라게 만들고 감동시킵니다. 자연은 우리의 생명과 안정을 지키며 우리에게 힘을 주는 곳입니다. 마지막으로, 지식을 향한 탐구는 항상 흥미로운 여정입니다. 우리는 끝없는 지식의 바다에서 배우고 발견할 수 있으며, 이것이 우리를 더 깊이 이해하고 세상을 더 넓게 보게 해줍니다. 그런 의미에서, 삶은 놀라움과 경이로움으로 가득 차 있습니다. 새로운 경험을 즐기고 항상 앞으로 나아가는 것이 중요하다고 생각합니다.",
+      "image": "../style/KTB 줌 배경화면_yellow.png",
+      "date": "2021-01-01 01:10:11",
+      "like": 1,
+      "view": 1,
+      "comment": 1
+    },
+    {
+      "id": "2",
+      "writerId": "2",
+      "title": "제목2",
+      "content": "내용2",
+      "date": "2021-02-02 02:20:22",
+      "like": 2,
+      "view": 2,
+      "comment": 2
+    },
+    {
+      "id": "d0b8",
+      "writerId": "1",
+      "title": "test 제목",
+      "content": "test 내용",
+      "date": "2024-11-10T14:24:26.746Z",
+      "like": 0,
+      "view": 0,
+      "comment": 0
+    },
+    {
+      "id": "090d",
+      "writerId": "1",
+      "title": "test2 제목",
+      "content": "test2 내용",
+      "date": "2024-11-10T14:30:30.735Z",
+      "like": 0,
+      "view": 0,
+      "comment": 3,
+      "image": "../style/KTB 줌 배경화면_yellow.png"
+    },
+    {
+      "id": "c9b2",
+      "writerId": "1",
+      "title": "인규",
+      "content": "인규내용",
+      "image": "../style/KTB 줌 배경화면_yellow.png",
+      "date": "2024-11-12T02:08:11.527Z",
+      "like": 0,
+      "view": 0,
+      "comment": 2
+    }
+  ],
+
+  "likes_mapping": [
+    {
+      "postId": "1",
+      "userId": "1"
+    },
+    {
+      "postId": "2",
+      "userId": "1"
+    },
+    {
+      "postId": "2",
+      "userId": "2"
+    },
+    {
+      "postId": "090d",
+      "userId": "1"
+    },
+    {
+      "postId": "090d",
+      "userId": "2"
+    },
+    {
+      "postId": "c9b2",
+      "userId": "1"
+    }
+  ],
+  "comments": [
+    {
+      "id": "2",
+      "postId": "090d",
+      "writerId": "2",
+      "content": "test2 댓글2",
+      "date": "2024-11-10T14:30:30.735Z"
+    },
+    {
+      "id": "beec",
+      "postId": "090d",
+      "writerId": "1",
+      "content": "해치웠나",
+      "date": "2024-11-11T05:48:06.393Z"
+    },
+    {
+      "id": "4a52",
+      "postId": "090d",
+      "writerId": "1",
+      "content": "아닌가",
+      "date": "2024-11-11T05:48:31.718Z"
+    },
+    {
+      "id": "62eb",
+      "postId": "090d",
+      "writerId": "1",
+      "content": "맞나",
+      "date": "2024-11-11T05:48:36.051Z"
+    },
+    {
+      "id": "5015",
+      "postId": "c9b2",
+      "writerId": "1",
+      "content": "sad",
+      "date": "2024-11-13T07:49:18.157Z"
+    },
+    {
+      "id": "e289",
+      "postId": "c9b2",
+      "writerId": "1",
+      "content": "??!",
+      "date": "2024-11-13T07:50:59.763Z"
+    },
+    {
+      "id": "6f65",
+      "postId": "2",
+      "writerId": "1",
+      "content": "아직도 못했어?",
+      "date": "2024-11-14T09:02:50.461Z"
+    },
+    {
+      "id": "b98b",
+      "postId": null,
+      "writerId": "1",
+      "content": "ㅁㄴㅇ",
+      "date": "2024-11-14T09:03:28.934Z"
+    }
+  ]
+}
