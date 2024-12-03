@@ -1,6 +1,9 @@
 import express from 'express';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+import mysql from 'mysql2';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 
@@ -30,6 +33,15 @@ app.use((req, res, next) => {
   console.log(`${req.method} ${req.url} - Body:`, req.body); // 요청 메서드, URL, Body 출력
   next(); // 다음 미들웨어로 이동
 });
+
+const connection = mysql.createConnection({
+  host: "localhost", // 데이터베이스 주소
+  port: "3306", // 데이터베이스 포트
+  user: "root", // 로그인 계정
+  password: process.env.PASSWORD, // 비밀번호
+  database: "my_db", // 엑세스할 데이터베이스
+});
+
 // 루트 접속시 아이피 출력
 app.get("/", function (req, res) {
   res.send("접속된 아이피: " + req.ip);

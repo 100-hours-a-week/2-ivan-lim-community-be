@@ -1,6 +1,6 @@
 import {emailValidChk, nicknameValidChk, passwordValidChk} from '../function/validCheck.js';
-
-
+import bcrypt from 'bcrypt';
+import {connectToDB, getPasswordById} from '../../db.js';
 
 //post
 export const login = async (req, res) => {
@@ -17,18 +17,23 @@ export const login = async (req, res) => {
         }
 
         // 2. 이메일이 존재하지 않는 경우
-        const response = await fetch('http://localhost:3030/data.json');
-        const data = await response.json();
+        // const response = await fetch('http://localhost:3030/data.json');
+        // const data = await response.json();
 
-        const user = data.users.find(user => user.email === email);
-        if (!user) {
-            return res.status(404).json({
-                message: "Email does not exist",
-                data: null
-            });
-        }
+        // const user = data.users.find(user => user.email === email);
+        // if (!user) {
+        //     return res.status(404).json({
+        //         message: "Email does not exist",
+        //         data: null
+        //     });
+        // }
         
         // 3. 비밀번호가 일치하지 않는 경우.
+        const id = "bcrypt@gmail.com";
+        const db = await connectToDB();
+        const userPassword = await getPasswordById(db, id);
+        const match = await bcrypt.compare(password, userPassword);
+
         if (user.password !== password) {
             return res.status(401).json({
                 message: "Password is incorrect"
@@ -56,8 +61,8 @@ export const login = async (req, res) => {
         });
     }
 }
-
 //post
+
 export const join = async (req, res) => {
     try {
         const email = req.body.email?.trim();
@@ -72,7 +77,7 @@ export const join = async (req, res) => {
                 data: null
             });
         }
-
+        
         // 2. 유효하지 않은 이메일, 비밀번호, 닉네임
         if(!emailValidChk(email)) {
             return res.status(400).json({
@@ -106,7 +111,13 @@ export const join = async (req, res) => {
 
         // 4. 회원가입 성공
         // add 필요 : post 요청하여 newUser 추가해주기.
+        const saltRounds = 9; // bcrypt 솔트 라운드
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+        const db = await connectToDB();
+        db.query('INSERT INTO Users (id, password) VALUES (?, ?)', [email, hashedPassword]);
+        // 임시 db 가져와 user 추가.
+        //////////////////////////////////////////////////////////////////////////
         res.status(201).json({
             message: 'register_success',
             data: {
