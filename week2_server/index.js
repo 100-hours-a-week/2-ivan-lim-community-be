@@ -29,7 +29,7 @@ app.use(cors({
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url} - Body:`, req.body); // 요청 메서드, URL, Body 출력
   console.log('Cookies:', req.headers.cookie); // 요청 헤더의 쿠키 출력
-  console.log('Session ID:', req.sessionID); // 세션 ID 출력
+  console.log('Session ID:', res.sessionID); // 세션 ID 출력
   next(); // 다음 미들웨어로 이동
 });
 
@@ -43,14 +43,20 @@ app.use(
     cookie: {
       maxAge: 24 * 60 * 60 * 1000, // 1일
       httpOnly: true,
-      // httpOnly: false,
-      secure: false, // HTTPS가 아니므로 false
+      //rolling: true, // 매 요청마다 쿠키 유지
+      secure: false, // 개발 중이라 HTTPS가 아니므로 false
       // sameSite: 'none', // 빼니까 된다. => secure: false로 설정한 상태에서 sameSite: 'none'을 설정하면, 브라우저가 이를 비정상적으로 간주하고 쿠키를 차단
       // domain: '127.0.0.1', // 쿠키의 도메인 명시적으로 설정. 근데 이거 설정하면 해당 domain으로 접속했는데도 쿠키가 안생김...
       domain: 'localhost', // 이게 default. 이건 명시적으로 써도 쿠키가 생김.
     },
   })
 );
+
+app.use((err, req, res, next) => {
+  res.status(err.status || 500).json({
+    message: err.message || 'Internal Server Error',
+  });
+});
 
 // 루트 접속시 아이피 출력
 app.get("/", function (req, res) {

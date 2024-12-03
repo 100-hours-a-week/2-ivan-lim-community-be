@@ -7,7 +7,7 @@ export const checkNickname = async (req, res) => {
         const response = await fetch('http://localhost:3030/data.json');
         const data = await response.json();
         
-        // Add 필요: 
+        // Add 필요:
         // 401, "required_authorization",
         // 403, "required_permission"
 
@@ -53,7 +53,7 @@ export const checkEmail = async (req, res) => {
         const email = req.query.email;
 
         if (data.users.some(user => user.email === email)) {
-            return res.status(200).json({
+            res.status(200).json({
                 message : "already_exist_email",
                 data : {
                     duplication : true
@@ -80,27 +80,27 @@ export const checkEmail = async (req, res) => {
 
 // 유저 정보 조회 API
 // GET /api/users/{user_id}
-export const getUserInfo = async (req, res) => {
+export const getPublicUserInfo = async (req, res) => {
     try {
+        const user_id = parseInt(req.params.user_id, 10);
+        console.log(`User ID: ${user_id}`);
         const response = await fetch('http://localhost:3030/data.json');
         const data = await response.json();
-
-        const user_id = req.params.user_id;
-
         const user = data.users.find(user => user.id === user_id);
 
         if (!user) {
-            return res.status(404).json({
+            res.status(404).json({
                 message: "user_not_found",
                 data: null
             });
+            return;
         }
-
+        
         res.status(200).json({
             message: "user_found",
             data:  {
                 userId: user.id,
-                email: user.email,
+                // email: user.email,
                 nickname: user.nickname,
                 profileImage: user.profileImage,
                 // created_at: "2024-03-26T09:59:50.000Z",
@@ -123,8 +123,8 @@ export const memInfoModi = async(req, res) => {
     try {
         let response = await fetch('http://localhost:3030/data.json');
         const data = await response.json();
-        const user_id = req.params.user_id;
-        const user = data.users.find(user => user.id === user_id);
+        const userId = req.session.userId;
+        const user = data.users.find(user => user.id === userId);
 
         if (!user) {
             return res.status(404).json({
@@ -155,11 +155,9 @@ export const memInfoModi = async(req, res) => {
         // 프로필 이미지 유효성 검사는 어케 하징?
     
         // 정상 응답
-        const userId = req.params.user_id; // URL에서 가져온 사용자 ID
         const file = req.file; // 업로드된 파일 정보
         const body = req.body; // 요청 본문 데이터
 
-        console.log(`User ID: ${userId}`);
         console.log(`File Info:`, file);
         console.log(`Request Body:`, body);
 
@@ -174,23 +172,31 @@ export const memInfoModi = async(req, res) => {
         // 2. 데이터베이스 업데이트 로직 (예제)
         // database.updateUser(userId, { nickname: updatedNickname, profileImg: filePath });
 
-        //fix 필요: 진짜 user data 수정해주기.
-        user.nickname = newNickname;
-        user.profileImgPath = profileImgPath;
-        
-
-        res.status(200).json({
-            message: "user_info_modified",
-            data:  {
-                userId: user.id,
-                email: user.email,
-                nickname: user.nickname,
-                profileImgPath: user.profileImgPath,
-                // created_at: "2024-03-26T09:59:50.000Z",
-                // updated_at: "2024-03-26T09:59:50.000Z",
-                // deleted_at: null
-            }
-        });
+        if(req.session.id !== userId) {
+            //fix 필요: 진짜 user data 수정해주기.
+            user.nickname = newNickname;
+            user.profileImgPath = profileImgPath;
+            
+    
+            res.status(200).json({
+                message: "user_info_modified",
+                data:  {
+                    userId: user.id,
+                    email: user.email,
+                    nickname: user.nickname,
+                    profileImgPath: user.profileImgPath,
+                    // created_at: "2024-03-26T09:59:50.000Z",
+                    // updated_at: "2024-03-26T09:59:50.000Z",
+                    // deleted_at: null
+                }
+            });
+        }
+        else {
+            res.status(401).json({
+                message: "required_authorization",
+                data: null
+            });
+        }
     }catch (error) {
         console.error(error);
         res.status(500).json({ 
@@ -207,7 +213,7 @@ export const passwordModi = async(req, res) => {
     try {
         let response = await fetch('http://localhost:3030/data.json');
         const data = await response.json();
-        const user_id = req.params.user_id;
+        const user_id = req.session.userId;
         const user = data.users.find(user => user.id === user_id);
 
         if (!user) {
@@ -255,7 +261,7 @@ export const memInfoDel = async(req, res) => {
     try {
         let response = await fetch('http://localhost:3030/data.json');
         const data = await response.json();
-        const user_id = req.params.user_id;
+        const user_id = parseInt(req.params.user_id,10);
         const user = data.users.find(user => user.id === user_id);
 
         if (!user) {

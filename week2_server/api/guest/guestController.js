@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import {emailValidChk, nicknameValidChk, passwordValidChk} from '../function/validCheck.js';
 
 //post
@@ -32,10 +33,19 @@ export const login = async (req, res) => {
                 message: "Password is incorrect"
             });
         }
+
+        // fix 필요 : bcrypt로 비밀번호 비교하기. 적용할 때 위에거 지우기.
+        // const match = await bcrypt.compare(password, user.password);
+        
+        // if (!match)
+            // return res.status(401).json({
+        //     message: "Password is incorrect"
+        // });
+
         // 4. 로그인 성공
         // return res.redirect('http://localhost:3000/listInquiry'); // 로그인 성공 시 리다이렉션
-        req.session.user = email; // Save user in session. 사용자가 req.session 객체에 데이터를 저장하면, express-session이 이를 자동으로 세션 저장소에 저장하고 관리합니다.
-        console.log("req.session.user: ", req.session.user);
+        req.session.userId = user.id;// Save user in session. 사용자가 req.session 객체에 데이터를 저장하면, express-session이 이를 자동으로 세션 저장소에 저장하고 관리.
+        console.log("req.session.userId: ", req.session);
         res.status(200).json({
             message: "login_success",
             data: {
@@ -104,8 +114,11 @@ export const join = async (req, res) => {
             });
         }
 
+        const saltRounds = 9; // bcrypt 솔트 라운드
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
         // 4. 회원가입 성공
-        // add 필요 : post 요청하여 newUser 추가해주기.
+        // add 필요 : post 요청하여 email,hashPassword 넣은 newUser 추가해주기.
 
         res.status(201).json({
             message: 'register_success',

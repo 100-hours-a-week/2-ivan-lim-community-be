@@ -31,3 +31,33 @@ export function notNativeNum(variable){
 // add 필요: 이미지 유효성 검사
 // export function imageValidChk(image) {
 // }
+
+export async function postPermissionCheck(res, post_id, user_id)
+{
+    // post_id 양수인지 확인
+    if (!notNativeNum(post_id)) {
+        return res.status(400).json({
+            message : "invalid_post_id",
+            data : null
+        });
+    }
+
+    const response = await fetch('http://localhost:3030/data.json');
+        if(!response.ok)
+            throw(response);
+        const jsonRes = await response.json();
+        const posts = jsonRes.posts;
+        const post = posts.find(post => post.id === post_id);
+        if(!post) {
+            return res.status(404).json({
+                message : "not_found_post",
+                data : null
+            });
+        }
+        if(post.writerId !== user_id) {
+            return res.status(403).json({
+                message : "required_permission",
+                data : null
+            });
+        }
+}

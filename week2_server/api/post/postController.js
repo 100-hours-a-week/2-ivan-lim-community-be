@@ -1,6 +1,6 @@
 // 게시글 목록조회 API
 // GET /api/posts?offset=0&limit=10
-import {notNativeNum} from '../function/validCheck.js';
+import {notNativeNum, postPermissionCheck} from '../function/validCheck.js';
 
 export const listInquiry = async (req, res) => {
     try {
@@ -59,6 +59,20 @@ export async function addPost(req, res){
         //     });
         // }
 
+        const user_id = req.session.userId;
+        const response = await fetch('http://localhost:3030/data.json');
+        if(!response.ok)
+            throw(response);
+        const data = await response.json();
+        const user = data.users.find(user => user.id === user_id);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "user_not_found",
+                data: null
+            });
+        }
+
         // 3. 게시글 추가 성공
         // add 필요 : post 요청하여 newPost 추가해주기.
 
@@ -80,35 +94,21 @@ export async function addPost(req, res){
 // GET /api/posts/:post_id
 export const detail = async (req, res) => {
     try {
-        const post_id = req.params.post_id;
+        const post_id = parseInt(req.params.post_id, 10);
 
-        // fix 필요? : post_id 양수인지 확인
-        // if (!notNativeNum(post_id)) {
-        //     return res.status(400).json({
-        //         message : "invalid_post_id",
-        //         data : null
-        //     });
-        // }
+        if (!notNativeNum(post_id)) {
+            return res.status(400).json({
+                message : "invalid_post_id",
+                data : null
+            });
+        }
         
         const response = await fetch('http://localhost:3030/data.json');
         if(!response.ok)
             throw(response);
         const data = await response.json();
         const post = data.posts.find(post => post.id === post_id);
-
-        // 디버거 질문용 예시 코드
-        // let like = 0;
         
-        // // console.log(data.likes_mapping);
-        // data.likes_mapping.forEach(like => {
-        //     if(like.postId === post_id) {
-        //         like++;
-        //   // console.log(like)
-        //     }
-        // });
-        // post.like = like;
-
-        // like 수 조회하여 post.like에 저장
         let likeCount = 0;
 
         data.likes_mapping.forEach(like => {
@@ -143,25 +143,21 @@ export const detail = async (req, res) => {
 
 export const editPost = async (req, res) => {
     try {
-        const post_id = req.params.post_id;
+        const post_id = parseInt(req.params.post_id,10);
+        const user_id = parseInt(req.session.userId,10);
         const { newTitle, newContent, newImage } = req.body;
         
-
-        // fix 필요? : post_id 양수인지 확인
-        // if (!notNativeNum(post_id)) {
-        //     return res.status(400).json({
-        //         message : "invalid_post_id",
-        //         data : null
-        //     });
-        // }
+        postPermissionCheck(res, post_id, user_id);
+        if (res.headersSent)
+            return;
 
         // add 필요: post_id를 이용하여 posts를 조회하여 post_id에 해당하는 게시글을 수정하기.
+        
         res.status(200).json({
             message: "edit_post_success",
             data: post_id
         });
     } catch (error) {
-        console.error(error);
         res.status(500).json({ 
             message: "Internal Server Error",
             data : null
@@ -173,15 +169,12 @@ export const editPost = async (req, res) => {
 // DELETE /api/posts/:post_id
 export function deletePost(req, res) {
     try {
-        const post_id = req.params.post_id;
-
-        // fix 필요? : post_id 양수인지 확인
-        // if (!notNativeNum(post_id)) {
-        //     return res.status(400).json({
-        //         message : "invalid_post_id",
-        //         data : null
-        //     });
-        // }
+        const post_id = parseInt(req.params.post_id,10);
+        const user_id = parseInt(req.session.userId,10);
+        
+        postPermissionCheck(res, post_id, user_id);
+        if (res.headersSent)
+            return;
 
         // add 필요: post_id를 이용하여 posts를 조회하여 post_id에 해당하는 게시글을 삭제하기.
         res.status(200).json({
