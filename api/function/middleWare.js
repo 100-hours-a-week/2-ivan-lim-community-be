@@ -7,7 +7,7 @@ export async function ssAuthMiddleware(req, res, next)
         const [rows] = await req.db.query(query);
 
         if (rows[0].Count === 0) {
-            const error = new Error('user_not_found');
+            const error = new Error('user_not_found');x``
             error.status = 404;
             error.message = 'user_not_found';
             return next(error); // 에러 전달
@@ -205,6 +205,9 @@ import {pool} from '../function/db.js';
 export async function connectToDB(req,res,next) {
     try {
         req.db = pool; // 전역 풀을 요청에 전달
+        
+        // 연결 테스트
+        await pool.query('SELECT 1');
         next();
     } catch (err) {
         console.error("MySQL 연결 실패:", err);

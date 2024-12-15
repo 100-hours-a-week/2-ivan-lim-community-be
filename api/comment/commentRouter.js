@@ -6,7 +6,7 @@ const commentRouter = express.Router();
 
 commentRouter.get('/:postId', getCommentList);
 commentRouter.post('/:postId', ssAuthMiddleware, wiBodyChkMiddleware, createComment);
-commentRouter.patch('/:commentId', ssAuthMiddleware, wiBodyChkMiddleware, EditComment);
-commentRouter.delete('/:commentId', ssAuthMiddleware, wiBodyChkMiddleware, deleteComment);
+commentRouter.patch('/:commentId', ssAuthMiddleware, EditComment);
+commentRouter.delete('/:commentId', ssAuthMiddleware, deleteComment);
 
 export default commentRouter;

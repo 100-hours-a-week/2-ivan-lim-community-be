@@ -8,7 +8,7 @@ export function emailValidChk(email) {
 }
 
 export function nicknameValidChk(nickname) {
-    if (nickname.length > 10 || nickname.includes(' ')) {
+    if (!nickname || nickname.length > 10 || nickname.includes(' ')) {
         return false;
     }
     else {
@@ -17,6 +17,8 @@ export function nicknameValidChk(nickname) {
 }
 
 export function passwordValidChk(password) {
+    if(!password)
+        return false;
     return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/.test(password);
 }
 

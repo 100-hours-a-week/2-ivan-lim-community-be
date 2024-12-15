@@ -9,6 +9,13 @@ export const checkNickname = async (req, res) => {
     try {
         
         const nickname = req.query.nickname;
+        if(!nickname)
+        {
+            return res.status(400).json({
+                message: "nickname cannot be empty",
+                data: null
+            });
+        }
 
         if (await isExistNickname(req.db, nickname)) {
             return res.status(200).json({
@@ -41,8 +48,14 @@ export const checkNickname = async (req, res) => {
 export const checkEmail = async (req, res) => {
     try {
         const email = req.query.email;
+        if(!email)
+        {
+            return res.status(400).json({
+                message: "email cannot be empty",
+                data: null
+            });
+        }
 
-        
         if (await isExistEmail(req.db, email)) {
             res.status(200).json({
                 message : "already_exist_email",
@@ -132,11 +145,6 @@ export const memInfoModi = async(req, res) => {
                 data: null
             });
         }
-    
-        // 정상 응답
-        const body = req.body; // 요청 본문 데이터
-
-        console.log(`Request Body:`, body);
 
         // 2. 데이터베이스 업데이트 로직
         const query = `UPDATE users SET nickname = ? WHERE id = ?`;
@@ -211,6 +219,9 @@ export const memInfoDel = async(req, res) => {
         await req.db.query(query);
         //add 필요: cascade 적용시켜줘야 작동함.
 
+        res.clearCookie('connect.sid');
+        req.session.destroy();
+
         res.status(200).json({
             message: "delete_user_data_success",
             data:  {
@@ -226,8 +237,16 @@ export const memInfoDel = async(req, res) => {
     }
 }
 
-// post /api/users/uploadImg/:user_id
+export function logout(req, res) {
+    res.clearCookie('connect.sid');
+    req.session.destroy();
+    res.status(200).json({
+        message: "logout_success",
+        data: null
+    });
+}
 
+// post /api/users/uploadImg/:user_id
 export const uploadImg = async (req, res) => {
     // user img에 path 추가
     const query = `UPDATE users SET profileImgPath = ? WHERE id = ?;`;

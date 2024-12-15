@@ -6,8 +6,18 @@ import {notNativeNum, postPermissionCheck} from '../function/validCheck.js';
 
 export const listInquiry = async (req, res) => {
     try {
-        const offset = parseInt(req.query.offset,10);
-        const limit = parseInt(req.query.limit,10);
+        let offset = req.query.offset;
+        let limit = req.query.limit;
+        if(!offset || !limit) {
+            return res.status(400).json({
+                message: "offset, limit cannot be empty",
+                data: null
+            });
+        }
+
+        // offset, limit 정수형으로 변환
+        offset = parseInt(offset,10);
+        limit = parseInt(limit,10);
 
         // offset과 limit 유효성 검사
         if (!notNativeNum(offset) || !notNativeNum(limit)) {
@@ -17,8 +27,8 @@ export const listInquiry = async (req, res) => {
             });
         }
         
-        // SELECT * FROM posts ORDER BY createdDate DESC LIMIT 10; //원래 이거 써야하는데
-        const query = `SELECT * FROM posts ORDER BY id DESC LIMIT ? OFFSET ?;`; // 일단 이거 쓰자. 근데 이대로면 offset 없어도 되겠다.
+        // SELECT * FROM posts ORDER BY date DESC LIMIT ? OFFSET ?; //원래 이거 써야하는데
+        const query = `SELECT * FROM posts ORDER BY id DESC LIMIT ? OFFSET ?;`; // 일단 이거 쓰자.
         const [posts] = await req.db.query(query, [limit, offset]);
 
         res.status(200).json({
@@ -39,9 +49,10 @@ export const listInquiry = async (req, res) => {
 
 export async function addPost(req, res){
     try {
-        const { title, content, image } = req.body;
+        const title = req.body.title?.trim();
+        const content = req.body.content?.trim();
 
-        // 1. 제목, 내용입력하지 않은 경우 (이미지는 필수가 아님)
+        // 제목, 내용입력하지 않은 경우
         if (!title || !content) {
             return res.status(400).json({
                 message: "Title, Content cannot be empty",
@@ -49,20 +60,12 @@ export async function addPost(req, res){
             });
         }
 
-        // 2. 이미지 형식이 아닌 경우
-        // if (!imageValidChk(image)) {
-        //     return res.status(400).json({
-        //         message: "invalid_image",
-        //         data: null
-        //     });
-        // }
-
-        // 3. 게시글 추가 성공
+        // 게시글 추가
         const query = `
-            INSERT INTO posts (title, content, writerId)
-            VALUES (?, ?, ?);
+            INSERT INTO posts (title, content, writerId, date)
+            VALUES (?, ?, ?, ?);
         `;
-        const [result] = await req.db.query(query, [title, content, req.session.userId]);
+        const [result] = await req.db.query(query, [title, content, req.session.userId, new Date()]);
 
         res.status(201).json({
             message: 'add_post_success',
@@ -120,12 +123,19 @@ export const detail = async (req, res) => {
 
 // 게시글 수정 API
 // PATCH /api/posts/:post_id
-
 export const editPost = async (req, res) => {
     try {
         const post_id = parseInt(req.params.post_id,10);
         const user_id = parseInt(req.session.userId,10);
-        const { newTitle, newContent, newImage } = req.body;
+        const newTitle = req.body.title?.trim();
+        const newContent = req.body.content?.trim();
+
+        if(!newTitle || !newContent) {
+            return res.status(400).json({
+                message: "Title, Content cannot be empty",
+                data: null
+            });
+        }
         
         if(!await postPermissionCheck(req, res, post_id, user_id))
             return;

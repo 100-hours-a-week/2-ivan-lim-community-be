@@ -9,7 +9,7 @@ export const login = async (req, res) => {
         const password = req.body.password;
 
         // 1. 이메일 또는 비밀번호 입력하지 않은 경우
-        if (!email || email === '' || !password) {
+        if (!email || !password) {
             return res.status(400).json({
                 message: "Email and Password cannot be empty",
                 data: null
@@ -69,7 +69,6 @@ export const join = async (req, res) => {
         const email = req.body.email?.trim();
         const password = req.body.password?.trim();
         const nickname = req.body.nickname?.trim();
-        const profileImg = req.body.profileImg;
 
         // 1. 이메일, 비밀번호, 닉네임 입력하지 않은 경우
         if (!email || !password || !nickname) {

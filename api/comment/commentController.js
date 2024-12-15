@@ -35,10 +35,17 @@ export const getCommentList = async (req, res) => {
 // POST /api/comments/:postId
 export const createComment = async (req, res) => {
     try {
-        const {writerId, content} = req.body;
+        const writerId = req.session.userId;
+        const content = req.body.content?.trim();
         const postId = parseInt(req.params.postId,10);
-        // add 필요? : id 두개 있는지 확인.. 해야 할까? 어차피 이전 미들웨어에서 확인해주기는 하는데...
         
+        if (!content) {
+            return res.status(400).json({
+                message : "content cannot be empty",
+                data : null
+            });
+        }
+
         if (!notNativeNum(postId)) {
             return res.status(400).json({
                 message : "invalid_post_id",
@@ -79,10 +86,12 @@ export const createComment = async (req, res) => {
 // PATCH /api/comments/:commentId
 export async function EditComment(req, res) {
     const commentId = parseInt(req.params.commentId,10);
-    const {writerId, newContent} = req.body;
-    if(!writerId || !newContent) {
+    const writerId = req.session.userId;
+    const newContent = req.body.newContent?.trim();
+    
+    if(!newContent) {
         res.status(400).json({
-            message: "writerId and newContent cannot be empty",
+            message: "newContent cannot be empty",
             data: null
         });
         return;
@@ -106,7 +115,7 @@ export async function EditComment(req, res) {
 // DELETE /api/comments/:commentId
 export async function deleteComment(req, res) {
     const commentId = parseInt(req.params.commentId,10);
-    const {writerId} = req.body;
+    const writerId = req.session.userId;
 
     if(!await commentPermissionCheck(req, res, commentId, writerId))
         return;
