@@ -36,8 +36,9 @@ app.use((req, res, next) => {
 
   // 응답이 완료된 후 실행
   res.on('finish', () => {
-      const duration = Date.now() - startTime;
-      console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl} -> ${res.statusCode} (${duration}ms)`);
+    const nowKST = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString(); // UTC + 9시간
+    const duration = Date.now() - startTime;
+    console.log(`[${nowKST}] ${req.method} ${req.originalUrl} -> ${res.statusCode} (${duration}ms)`);
   });
 
   next();
