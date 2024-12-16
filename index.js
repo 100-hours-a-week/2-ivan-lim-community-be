@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 // CORS 설정
 import cors from 'cors';
 app.use(cors({
-  origin: ['http://127.0.0.1:3000', 'http://localhost:3000'], // 허용할 클라이언트 도메인
+  origin: ['http://127.0.0.1:3000', 'http://localhost:3000', 'http://13.125.214.215:3000'], // 허용할 클라이언트 도메인
   methods: ['GET', 'POST', 'PATCH', 'DELETE'], // 허용할 HTTP 메서드
   credentials: true, // 쿠키 허용
 }));
