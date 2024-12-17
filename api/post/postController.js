@@ -127,8 +127,8 @@ export const editPost = async (req, res) => {
     try {
         const post_id = parseInt(req.params.post_id,10);
         const user_id = parseInt(req.session.userId,10);
-        const newTitle = req.body.title?.trim();
-        const newContent = req.body.content?.trim();
+        const newTitle = req.body.newTitle?.trim();
+        const newContent = req.body.newContent?.trim();
 
         if(!newTitle || !newContent) {
             return res.status(400).json({
