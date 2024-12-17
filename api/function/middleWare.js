@@ -7,7 +7,7 @@ export async function ssAuthMiddleware(req, res, next)
         const [rows] = await req.db.query(query);
 
         if (rows[0].Count === 0) {
-            const error = new Error('user_not_found');x``
+            const error = new Error('user_not_found');
             error.status = 404;
             error.message = 'user_not_found';
             return next(error); // 에러 전달
@@ -113,7 +113,7 @@ export function profileImgMiddlewareFactory(customString) {
             // 파일 이름 지정 (customString 활용)
             filename: (req, file, cb) => {
                 const ext = extname(file.originalname); // 원래 파일 확장자 추출
-                cb(null, `${req.params.user_id}${ext}`);
+                cb(null, `${req.session.userId}${ext}`);
             }
         });
 

@@ -254,7 +254,7 @@ export const uploadImg = async (req, res) => {
     // 파일 이름 추출
     const fileName = path.basename(req.file.path);
 
-    const values = [fileName, req.params.user_id];
+    const values = [fileName, req.session.userId];
     await req.db.query(query, values);
 
     res.status(200).json({
