@@ -62,7 +62,7 @@ app.use(
     },
   })
 );
-
+ 
 // 에러 처리 미들웨어
 app.use((err, req, res, next) => {
   res.status(err.status || 500).json({
