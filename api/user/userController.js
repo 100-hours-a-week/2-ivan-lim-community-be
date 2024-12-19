@@ -213,11 +213,25 @@ export const passwordModi = async(req, res) => {
 // DELETE /api/users/{user_id}
 export const memInfoDel = async(req, res) => {
     try {
-        const user_id = parseInt(req.params.user_id,10);
+        const user_id = parseInt(req.session.userId,10); // 이거 parseInt 해야하나? req.session.userId에 number로 들어가지 않나?
         
-        const query = `DELETE FROM users WHERE id = ${user_id}`;
+        let query;
+
+        // writerId가 특정 user_id인 모든 comment의 postId를 가져옴
+        query = `SELECT postId FROM comments WHERE writerId = ?`;
+        const [comments] = await req.db.query(query, [user_id]);
+
+        if (comments.length > 0) {
+            const postIds = comments.map(comment => comment.postId);
+
+            // 해당 postId들의 comment 값을 한 번에 감소
+            query = `UPDATE posts SET comment = comment - 1 WHERE id IN (?)`;
+            await req.db.query(query, [postIds]);
+        }
+
+        query = `DELETE FROM users WHERE id = ${user_id}`;
         await req.db.query(query);
-        //add 필요: cascade 적용시켜줘야 작동함.
+        
 
         res.clearCookie('connect.sid');
         req.session.destroy();
