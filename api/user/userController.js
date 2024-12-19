@@ -229,6 +229,17 @@ export const memInfoDel = async(req, res) => {
             await req.db.query(query, [postIds]);
         }
 
+        // 해당 user가 like 남긴 post에서 like 값 감소
+        query = `SELECT postId FROM likes_mapping WHERE userId = ?`;
+        const [likes] = await req.db.query(query, [user_id]);
+
+        if (likes.length > 0) {
+            const postIds = likes.map(like => like.postId);
+
+            query = `UPDATE posts SET \`like\` = \`like\` - 1 WHERE id IN (?)`;
+            await req.db.query(query, [postIds]);
+        }
+
         query = `DELETE FROM users WHERE id = ${user_id}`;
         await req.db.query(query);
         
