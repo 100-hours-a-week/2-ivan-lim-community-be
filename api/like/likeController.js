@@ -11,6 +11,41 @@ async function isLikeExist(db, userId, postId)
         return true;
 }
 
+export async function getMylikeState(req, res)
+{
+    const postId = parseInt(req.params.postId,10);
+    const userId = parseInt(req.session.userId,10);
+
+    // postId 양수인지 확인
+    if (!notNativeNum(postId)) {
+        res.status(400).json({
+            message : "invalid_postId",
+            data : null
+        });
+    }
+
+    // 해당 postId를 갖는 post가 존재하는지 확인.
+    let query = `SELECT * FROM posts WHERE id = ${postId}`;
+    const [posts] = await req.db.query(query);
+
+    if(posts.length === 0) {
+        res.status(404).json({
+            message : "not_found_post",
+            data : null
+        });
+    }
+
+    // likes_mapping 테이블에 해당 postId와 userId를 컬럼값으로 들고 있는 데이터가 있는 경우 true, 그렇지 않으면 false.
+    const likeState = await isLikeExist(req.db, userId, postId);
+
+    res.status(200).json({
+        message : "get_like_state_success",
+        data : {
+            likeState : likeState
+        }
+    });
+}
+
 export async function toggleLike(req, res)
 {
     const postId = parseInt(req.params.postId,10);
