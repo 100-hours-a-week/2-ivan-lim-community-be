@@ -11,7 +11,7 @@ userRouter.patch('/:user_id', ssAuthMiddleware, profileImgMiddlewareFactory('new
 userRouter.patch('/:user_id/password', ssAuthMiddleware, uiParamChkMiddleware, passwordModi);
 userRouter.delete('/:user_id', ssAuthMiddleware, uiParamChkMiddleware, memInfoDel);
 
-userRouter.post('/logout', ssAuthMiddleware, logout);
+userRouter.post('/logout', logout);
 userRouter.post('/uploadImg', ssAuthMiddleware, profileImgMiddlewareFactory('profileImg'), uploadImg);
 // guestRouter.post('/uploadImg', ssAuthMiddleware, uiParamChkMiddleware, profileImgMiddlewareFactory('profileImg'), uploadImg);
 
