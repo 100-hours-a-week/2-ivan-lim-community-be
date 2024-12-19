@@ -9,9 +9,11 @@ export const pool = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DATABASE,
+  multipleStatements: true, // 여러 쿼리 실행 허용
   waitForConnections: true,
   connectionLimit: 10, // 최대 연결 수
   queueLimit: 0        // 대기열 제한
+  
 });
 
 // export async function getPasswordById(db, userId) {
