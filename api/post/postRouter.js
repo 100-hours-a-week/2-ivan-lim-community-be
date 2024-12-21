@@ -1,6 +1,6 @@
 import express from 'express';
-import { listInquiry, addPost, detail, editPost, deletePost, uploadImg, authorizeAction } from './postController.js';
-import {ssAuthMiddleware, wiBodyChkMiddleware, postImgMiddlewareFactory} from '../function/middleWare.js';
+import { listInquiry, addPost, detail, editPost, deletePost, uploadImg, authorizeAction, updateViewCount } from './postController.js';
+import {ssAuthMiddleware, postImgMiddlewareFactory} from '../function/middleWare.js';
 
 const postRouter = express.Router();
 
@@ -12,4 +12,7 @@ postRouter.delete('/:post_id', ssAuthMiddleware, deletePost)
 postRouter.post('/uploadImg/:post_id', ssAuthMiddleware, postImgMiddlewareFactory('postImg'),uploadImg)
 
 postRouter.get('/permissionCheck/:post_id', authorizeAction)
+
+import cookieParser from 'cookie-parser';
+postRouter.patch('/view/:post_id', cookieParser(), updateViewCount)
 export default postRouter;

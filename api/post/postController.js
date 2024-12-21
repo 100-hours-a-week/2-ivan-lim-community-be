@@ -229,6 +229,40 @@ export async function authorizeAction(req, res) {
             data : null
         });
     }
+}
 
+export async function updateViewCount(req, res) {
+    try{
+        const post_id = parseInt(req.params.post_id,10);
+        
+        let viewHistory = req.cookies.viewHistory;
 
+        if(viewHistory && viewHistory.includes(post_id)){
+            return res.status(200).json({
+                message: "already_viewed",
+                data: null
+            });
+        }
+        else
+        {
+            viewHistory = viewHistory ? [...viewHistory, post_id] : [post_id];
+            res.cookie('viewHistory', viewHistory, { 
+                maxAge: 30 * 60 * 1000, //30분
+                httpOnly: true,
+                domain: process.env.SS_DOMAIN,
+            });
+        }
+        const query = `UPDATE posts SET view = view + 1 WHERE id = ?;`;
+        await req.db.query(query, [post_id]);
+
+        res.status(200).json({
+            message: "update_view_count_success",
+            data: null
+        });
+    }catch{
+        res.status(500).json({ 
+            message: "Internal Server Error in updateViewCount",
+            data : null
+        });
+    }
 }
