@@ -1,3 +1,7 @@
+import { dirname} from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+
 export function emailValidChk(email) {
     const pattern = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-za-z0-9\-]+/;
 
@@ -42,11 +46,18 @@ export async function postPermissionCheck(res, post_id, user_id)
         });
     }
 
-    const response = await fetch('http://localhost:3030/data.json');
-        if(!response.ok)
-            throw(response);
-        const jsonRes = await response.json();
-        const posts = jsonRes.posts;
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    fs.readFile(__dirname + '/../../data.json', 'utf8', (err, data) => {
+        if(err) {
+            console.error(err);
+            res.status(500).json({
+                message: "Internal Server Error",
+                data : null
+            });
+            return;
+        }
+        const jsonData = JSON.parse(data);
+        const posts = jsonData.posts;
         const post = posts.find(post => post.id === post_id);
         if(!post) {
             return res.status(404).json({
@@ -60,4 +71,5 @@ export async function postPermissionCheck(res, post_id, user_id)
                 data : null
             });
         }
+    });
 }

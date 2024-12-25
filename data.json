@@ -1,13 +1,6 @@
 {
   "users": [
     {
-      "id": 0,
-      "nickname": "admin",
-      "email": "a",
-      "password" : "a",
-      "profileImgPath": "../style/춘식.png"
-    },
-    {
       "id": 1,
       "nickname": "더미작성자1",
       "email": "example@example.com",
@@ -18,6 +11,13 @@
       "id": 2,
       "nickname": "더미 작성자 2",
       "email": "test@test.com",
+      "password" : "Abc1234!",
+      "profileImgPath": "../style/귤춘식.jpg"
+    },
+    {
+      "id": 3,
+      "nickname": "더미 작성자 3",
+      "email": "a@naver.com",
       "password" : "Abc1234!",
       "profileImgPath": "../style/귤춘식.jpg"
     }

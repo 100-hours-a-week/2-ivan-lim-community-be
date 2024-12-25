@@ -1,19 +1,39 @@
 import {nicknameValidChk, passwordValidChk} from '../function/validCheck.js';
 import path from 'path';
+import { dirname} from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+
 // 닉네임 중복체크 API
 // GET /api/users/checkNickname
 export const checkNickname = async (req, res) => {
-    try {
-        const response = await fetch('http://localhost:3030/data.json');
-        const data = await response.json();
+        const nickname = req.query.nickname;
+
+        if(!nickname)
+        {
+            return res.status(400).json({
+                message: "nickname must be entered",
+                data : null
+            });
+        }
+
+        const __dirname = dirname(fileURLToPath(import.meta.url));
+        fs.readFile(__dirname + '/../../data.json', 'utf8', (err, data) => {
+            if(err) {
+                console.error(err);
+                res.status(500).json({
+                    message: "Internal Server Error",
+                    data : null
+                });
+                return;
+            }
+            const jsonData = JSON.parse(data);
         
         // Add 필요:
         // 401, "required_authorization",
         // 403, "required_permission"
 
-        const nickname = req.query.nickname;
-
-        if (data.users.some(user => user.nickname === nickname)) {
+        if (jsonData.users.some(user => user.nickname === nickname)) {
             return res.status(200).json({
                 message : "already_exist_nickname",
                 data : {
@@ -30,29 +50,39 @@ export const checkNickname = async (req, res) => {
                 }
             });
         }
-    }catch (error) {
-        console.error(error);
-        res.status(500).json({ 
-            message: "Internal Server Error",
-            data : null
-        });
-    }
+    });
 };
 
 // 아메알 중복체크 API
 // GET /api/users/checkEmail
 export const checkEmail = async (req, res) => {
-    try {
-        const response = await fetch('http://localhost:3030/data.json');
-        const data = await response.json();
+        const email = req.query.email;
+
+        if(!email)
+        {
+            return res.status(400).json({
+                message: "email must be entered",
+                data : null
+            });
+        }
+
+        const __dirname = dirname(fileURLToPath(import.meta.url));
+        fs.readFile(__dirname + '/../../data.json', 'utf8', (err, data) => {
+            if(err) {
+                console.error(err);
+                res.status(500).json({
+                    message: "Internal Server Error",
+                    data : null
+                });
+                return;
+            }
+            const jsonData = JSON.parse(data);
 
         // Add 필요: 
         // 401, "required_authorization",
         // 403, "required_permission"
-
-        const email = req.query.email;
-
-        if (data.users.some(user => user.email === email)) {
+        
+        if (jsonData.users.some(user => user.email === email)) {
             res.status(200).json({
                 message : "already_exist_email",
                 data : {
@@ -69,24 +99,26 @@ export const checkEmail = async (req, res) => {
                 }
             });
         }
-    }catch (error) {
-        console.error(error);
-        res.status(500).json({ 
-            message: "Internal Server Error",
-            data : null
-        });
-    }
+    });
 };
 
 // 유저 정보 조회 API
 // GET /api/users/{user_id}
 export const getPublicUserInfo = async (req, res) => {
-    try {
         const user_id = parseInt(req.params.user_id, 10);
         console.log(`User ID: ${user_id}`);
-        const response = await fetch('http://localhost:3030/data.json');
-        const data = await response.json();
-        const user = data.users.find(user => user.id === user_id);
+        const __dirname = dirname(fileURLToPath(import.meta.url));
+        fs.readFile(__dirname + '/../../data.json', 'utf8', (err, data) => {
+            if(err) {
+                console.error(err);
+                res.status(500).json({
+                    message: "Internal Server Error",
+                    data : null
+                });
+                return;
+            }
+        const jsonData = JSON.parse(data);
+        const user = jsonData.users.find(user => user.id === user_id);
 
         if (!user) {
             res.status(404).json({
@@ -108,23 +140,25 @@ export const getPublicUserInfo = async (req, res) => {
                 // deleted_at: null
             }
         });
-    }catch (error) {
-        console.error(error);
-        res.status(500).json({ 
-            message: "Internal Server Error",
-            data : null
-        });
-    }
+    });
 }
 
 // 회원 정보(닉네임, 프로필) 수정 API
 // PATCH /api/users/{user_id}
 export const memInfoModi = async(req, res) => {
-    try {
-        let response = await fetch('http://localhost:3030/data.json');
-        const data = await response.json();
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    fs.readFile(__dirname + '/../../data.json', 'utf8', (err, data) => {
+        if(err) {
+            console.error(err);
+            res.status(500).json({
+                message: "Internal Server Error",
+                data : null
+            });
+            return;
+        }
+        const jsonData = JSON.parse(data);
         const userId = req.session.userId;
-        const user = data.users.find(user => user.id === userId);
+        const user = jsonData.users.find(user => user.id === userId);
 
         if (!user) {
             return res.status(404).json({
@@ -197,24 +231,26 @@ export const memInfoModi = async(req, res) => {
                 data: null
             });
         }
-    }catch (error) {
-        console.error(error);
-        res.status(500).json({ 
-            message: "Internal Server Error",
-            data : null
-        });
-    }
+    });
 }
 
 // 회원 비밀번호 수정 API
 // PATCH /api/users/{user_id}/password
 
 export const passwordModi = async(req, res) => {
-    try {
-        let response = await fetch('http://localhost:3030/data.json');
-        const data = await response.json();
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    fs.readFile(__dirname + '/../../data.json', 'utf8', (err, data) => {
+        if(err) {
+            console.error(err);
+            res.status(500).json({
+                message: "Internal Server Error",
+                data : null
+            });
+            return;
+        }
+        const jsonData = JSON.parse(data);
         const user_id = req.session.userId;
-        const user = data.users.find(user => user.id === user_id);
+        const user = jsonData.users.find(user => user.id === user_id);
 
         if (!user) {
             return res.status(404).json({
@@ -246,23 +282,25 @@ export const passwordModi = async(req, res) => {
                 // deleted_at: null
             }
         });
-    }catch (error) {
-        console.error(error);
-        res.status(500).json({ 
-            message: "Internal Server Error",
-            data : null
-        });
-    }
+    });
 }
 
 // 회원 탈퇴 API
 // DELETE /api/users/{user_id}
 export const memInfoDel = async(req, res) => {
-    try {
-        let response = await fetch('http://localhost:3030/data.json');
-        const data = await response.json();
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    fs.readFile(__dirname + '/../../data.json', 'utf8', (err, data) => {
+        if(err) {
+            console.error(err);
+            res.status(500).json({
+                message: "Internal Server Error",
+                data : null
+            });
+            return;
+        }
+        const jsonData = JSON.parse(data);
         const user_id = parseInt(req.params.user_id,10);
-        const user = data.users.find(user => user.id === user_id);
+        const user = jsonData.users.find(user => user.id === user_id);
 
         if (!user) {
             return res.status(404).json({
@@ -285,11 +323,5 @@ export const memInfoDel = async(req, res) => {
                 // deleted_at: null
             }
         });
-    }catch (error) {
-        console.error(error);
-        res.status(500).json({ 
-            message: "Internal Server Error",
-            data : null
-        });
-    }
+    });
 }
