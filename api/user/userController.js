@@ -217,16 +217,16 @@ export const memInfoDel = async(req, res) => {
         
         let query;
 
-        // writerId가 특정 user_id인 모든 comment의 postId를 가져옴
-        query = `SELECT postId FROM comments WHERE writerId = ?`;
+        // writerId가 특정 user_id인 모든 comment의 postId와 그 개수를 그룹화하여 가져옴
+        query = `SELECT postId, COUNT(*) as count FROM comments WHERE writerId = ? GROUP BY postId`;
         const [comments] = await req.db.query(query, [user_id]);
 
         if (comments.length > 0) {
-            const postIds = comments.map(comment => comment.postId);
-
-            // 해당 postId들의 comment 값을 한 번에 감소
-            query = `UPDATE posts SET comment = comment - 1 WHERE id IN (?)`;
-            await req.db.query(query, [postIds]);
+            for (const { postId, count } of comments) {
+                // 각 postId에 대해 comment 값을 count만큼 감소
+                query = `UPDATE posts SET comment = comment - ? WHERE id = ?`;
+                await req.db.query(query, [count, postId]);
+            }
         }
 
         // 해당 user가 like 남긴 post에서 like 값 감소
