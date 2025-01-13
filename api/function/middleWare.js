@@ -151,7 +151,7 @@ export function postImgMiddlewareFactory(customString) {
             // 파일 이름 지정 (customString 활용)
             filename: (req, file, cb) => {
                 const ext = extname(file.originalname); // 원래 파일 확장자 추출
-                cb(null, `${req.params.post_id}${ext}`); // fix 필요: 이래서 이미지 업로드 api가 따로 있었구나. 유효성 검사, 인증, 인가 통과 시에만 이미지를 추가하기 위해.
+                cb(null, `${req.params.post_id}${ext}`);
             }
         });
 

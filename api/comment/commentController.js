@@ -63,7 +63,6 @@ export const createComment = async (req, res) => {
             return;
         }
 
-        // add 필요: 댓글 생성 기능. + 생성된 댓글의 postId에 해당하는 post의 commentCount를 1 증가시키는 기능.
         query = `INSERT INTO comments (content, postId, writerId, date) VALUES (?, ?, ?, ?);`;
         await req.db.query(query, [content, postId, writerId, new Date()]);
         query = `UPDATE posts SET comment = comment + 1 WHERE id = ?;`;

@@ -109,7 +109,6 @@ export const join = async (req, res) => {
         }
 
         // 4. 회원가입 성공
-        // add 필요 : post 요청하여 email,hashPassword 넣은 newUser 추가해주기.
         const saltRounds = 9; // bcrypt 솔트 라운드
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
