@@ -197,4 +197,9 @@ FakesAssemblies/
 
 .DS_Store
 .env
-uploadedImg
+
+uploadedImg/postImg/*
+!uploadedImg/postImg/.gitkeep
+
+uploadedImg/userProfileImg/*
+!uploadedImg/userProfileImg/.gitkeep
