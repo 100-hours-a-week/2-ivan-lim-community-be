@@ -1,0 +1,61 @@
+name: Zero Downtime Deployment
+
+on:
+  push:
+    branches:
+      - ec2_server
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare SSH Key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" | base64 --decode > key.pem
+          chmod 600 key.pem
+
+      - name: Deploy to EC2
+        run: |
+          HOST=${{ secrets.EC2_HOST }}
+          USER=${{ secrets.EC2_USER }}
+
+          # SSH 접속 후 배포 작업 수행
+          ssh -o StrictHostKeyChecking=no -i key.pem $USER@$HOST << EOF
+            echo "Starting deployment..."
+
+            # Nginx 설정에서 현재 포트 확인
+            CURRENT_PORT=\$(grep -oP '(?<=proxy_pass http://localhost:)\d+' /etc/nginx/nginx.conf)
+            if [ "\${CURRENT_PORT}" -eq 3030 ]; then
+              NEXT_PORT=3031
+            else
+              NEXT_PORT=3030
+            fi
+
+            echo "Current port: \${CURRENT_PORT}, Next port: \${NEXT_PORT}"
+
+            # 새로운 컨테이너 실행
+            docker pull ghcr.io/${{ github.repository_owner }}/my-app:latest
+            docker run -d --name my-app-\${NEXT_PORT} -p \${NEXT_PORT}:3000 ghcr.io/${{ github.repository_owner }}/my-app:latest
+
+            # 헬스체크 수행
+            echo "Performing health check on port \${NEXT_PORT}..."
+            for i in {1..10}; do
+              curl -sf http://localhost:\${NEXT_PORT}/health && break
+              echo "Health check failed, retrying... (\$i/10)"
+              sleep 5
+            done
+
+            if ! curl -sf http://localhost:\${NEXT_PORT}/health; then
+              echo "Health check failed. Rolling back..."
+              docker rm -f my-app-\${NEXT_PORT}
+              exit 1
+            fi
+
+            # Nginx 설정 업데이트
+            sudo sed -i "s/proxy_pass http:\/\/localhost:\${CURRENT_PORT}/proxy_pass http:\/\/localhost:\${NEXT_PORT}/" /etc/nginx/nginx.conf
+            sudo nginx -s reload
+
+            # 이전 컨테이너 정리
+            docker rm -f my-app-\${CURRENT_PORT}
+            docker system prune -a -f
+          EOF
