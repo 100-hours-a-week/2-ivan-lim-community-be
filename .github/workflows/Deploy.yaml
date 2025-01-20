@@ -18,7 +18,7 @@ jobs:
         run: |
           HOST=${{ secrets.EC2_HOST }}
           USER=${{ secrets.EC2_USER }}
-          NGINX_CONF=${{ variables.NGINX_CONF }}
+          NGINX_CONF=${{ vars.NGINX_CONF }}
 
           # SSH 접속 후 배포 작업 수행
           ssh -o StrictHostKeyChecking=no -i key.pem $USER@$HOST << EOF
@@ -28,7 +28,7 @@ jobs:
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PAT }}
 
             # Nginx 설정 파일 확인
-            if [ ! -f "${env.NGINX_CONF}" ]; then
+            if [ ! -f "${NGINX_CONF}" ]; then
               echo "Error: Nginx configuration file not found at ${NGINX_CONF}."
               exit 1
             fi
