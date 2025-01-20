@@ -27,7 +27,7 @@ jobs:
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PAT }}
 
             # Nginx 설정 파일 경로
-            NGINX_CONF="/etc/nginx/nginx.conf"
+            NGINX_CONF="/etc/nginx/sites-enabled/nginx.conf"
 
             # Nginx 설정 파일 확인
             if [ ! -f "${NGINX_CONF}" ]; then
