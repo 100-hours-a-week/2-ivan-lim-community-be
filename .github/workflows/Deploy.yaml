@@ -26,17 +26,14 @@ jobs:
             # Docker Registry 로그인
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PAT }}
 
-            # Nginx 설정 파일 경로
-            NGINX_CONF="/etc/nginx/sites-enabled/nginx.conf"
-
             # Nginx 설정 파일 확인
-            if [ ! -f "${NGINX_CONF}" ]; then
-              echo "Error: Nginx configuration file not found at ${NGINX_CONF}."
+            if [ ! -f "${variables.NGINX_CONF}" ]; then
+              echo "Error: Nginx configuration file not found at ${variables.NGINX_CONF}."
               exit 1
             fi
 
             # Nginx 설정에서 현재 포트 확인
-            CURRENT_PORT=$(grep -oP '(?<=proxy_pass http://localhost:)\d+' "${NGINX_CONF}")
+            CURRENT_PORT=$(grep -oP '(?<=proxy_pass http://localhost:)\d+' "${variables.NGINX_CONF}")
             if [ "\${CURRENT_PORT}" -eq 3030 ]; then
               NEXT_PORT=3031
             else
@@ -64,7 +61,7 @@ jobs:
             fi
 
             # Nginx 설정 업데이트
-            sudo sed -i "s/proxy_pass http:\/\/localhost:\${CURRENT_PORT}/proxy_pass http:\/\/localhost:\${NEXT_PORT}/" ${NGINX_CONF}
+            sudo sed -i "s/proxy_pass http:\/\/localhost:\${CURRENT_PORT}/proxy_pass http:\/\/localhost:\${NEXT_PORT}/" ${variables.NGINX_CONF}
             sudo nginx -s reload
 
             # 이전 컨테이너 정리
