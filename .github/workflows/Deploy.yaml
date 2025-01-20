@@ -29,7 +29,7 @@ jobs:
               docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PAT }}
 
               # Nginx 설정 파일 확인
-              if [ ! -f \"$NGINX_CONF\" ]; then
+              if [ ! -f "${NGINX_CONF}" ]; then
                 echo 'Error: Nginx configuration file not found at $NGINX_CONF.'
                 exit 1
               else
