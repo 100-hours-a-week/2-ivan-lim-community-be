@@ -23,6 +23,9 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i key.pem $USER@$HOST << EOF
             echo "Starting deployment..."
 
+            # Docker Registry 로그인
+            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PAT }}
+
             # Nginx 설정에서 현재 포트 확인
             CURRENT_PORT=\$(grep -oP '(?<=proxy_pass http://localhost:)\d+' /etc/nginx/nginx.conf)
             if [ "\${CURRENT_PORT}" -eq 3030 ]; then
