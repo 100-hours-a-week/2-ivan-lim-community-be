@@ -42,6 +42,7 @@ jobs:
             # 포트가 제대로 추출되었는지 확인
             if [ -z "$CURRENT_PORT" ]; then
               echo "Error: Could not find the current port in $NGINX_CONF."
+              echo "CURRENT_PORT: $CURRENT_PORT"
               exit 1
             fi
 
