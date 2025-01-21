@@ -8,6 +8,8 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.set-version.outputs.VERSION }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -16,8 +18,13 @@ jobs:
         run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build and push Docker image
+        id: set-version
         run: |
-          VERSION=$(date +%Y%m%d%H%M%S) # Timestamp 기반으로 버전 관리
+          TIMESTAMP=$(date +'%Y%m%d%H%M%S') # Timestamp 기반으로 버전 관리.
+          echo "VERSION=$TIMESTAMP" >> $GITHUB_OUTPUT # 다른 job에서도 사용할 수 있도록 환경 변수를 저장.
+          # echo "VERSION=$TIMESTAMP" >> $GITHUB_ENV # 해당 job 내에서만 VERSION이라는 환경 변수를 사용.
+          # echo "::set-output name=VERSION::$TIMESTAMP" # 권장 방법은 아니지만, 다른 job에서 사용할 수 있도록 환경 변수를 저장.
+
           docker build -t ghcr.io/${{ github.repository_owner }}/my-app:${VERSION} .
           docker push ghcr.io/${{ github.repository_owner }}/my-app:${VERSION}
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
@@ -38,12 +45,12 @@ jobs:
           NGINX_CONF=${{ vars.NGINX_CONF }}
           # NGINX_CONF=/etc/nginx/sites-enabled/nginx.conf
           CURRENT_PORT=$(ssh -o StrictHostKeyChecking=no -i key.pem $USER@$HOST "grep -A 1 'upstream backend' ${NGINX_CONF} | grep -Eo '[0-9]+'")
+          VERSION=${{ needs.build-and-push.outputs.VERSION }}"
+          echo "Deploying version $VERSION to $HOST..."
+          
           # SSH 접속 후 배포 작업 수행
           ssh -o StrictHostKeyChecking=no -i key.pem $USER@$HOST << EOF
             echo "Starting deployment..."
-
-            # Docker Registry 로그인
-            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PAT }}
 
             # Nginx 설정 파일 확인
             if [ ! -f "${NGINX_CONF}" ]; then
@@ -68,6 +75,9 @@ jobs:
             fi
 
             echo "Current port: $CURRENT_PORT, Next port: $NEXT_PORT"
+
+            # Docker Registry 로그인
+            docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PAT }}
 
             # 새로운 컨테이너 실행
             docker pull ghcr.io/${{ github.repository_owner }}/my-app:latest
