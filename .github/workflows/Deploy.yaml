@@ -27,7 +27,8 @@ jobs:
           # echo "::set-output name=TAG::$TIMESTAMP" # 권장 방법은 아니지만, 다른 job에서 사용할 수 있도록 환경 변수를 저장.
 
           # 하나는 대괄호 쓰고 하나는 안썼는데 결과 동일. 둘 다 사용 가능.
-          docker build -t ghcr.io/${{ github.repository_owner }}/my-app:$TAG .
+          echo "$TAG"
+          # docker build -t ghcr.io/${{ github.repository_owner }}/my-app:$TAG .
           # docker push ghcr.io/${{ github.repository_owner }}/my-app:${TAG}
 
   deploy:
