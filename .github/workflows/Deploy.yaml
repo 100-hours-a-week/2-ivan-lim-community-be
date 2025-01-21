@@ -9,7 +9,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     outputs:
-      VERSION: ${{ steps.set-version.outputs.VERSION }}
+      TAG: ${{ steps.set-version.outputs.TAG }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -21,13 +21,14 @@ jobs:
         id: set-version
         run: |
           TIMESTAMP=$(date +'%Y%m%d%H%M%S') # Timestamp 기반으로 버전 관리.
-          echo "VERSION=$TIMESTAMP" >> $GITHUB_OUTPUT # 다른 job에서도 사용할 수 있도록 환경 변수를 저장.
-          # echo "VERSION=$TIMESTAMP" >> $GITHUB_ENV # 해당 job 내에서만 VERSION이라는 환경 변수를 사용.
-          # echo "::set-output name=VERSION::$TIMESTAMP" # 권장 방법은 아니지만, 다른 job에서 사용할 수 있도록 환경 변수를 저장.
+          TAG=ivan-${TIMESTAMP}
+          echo TAG=ivan-${TIMESTAMP} >> $GITHUB_OUTPUT # 다른 job에서도 사용할 수 있도록 환경 변수를 저장.
+          # echo TAG=ivan-${TIMESTAMP} >> $GITHUB_ENV # 해당 job 내에서만 TAG이라는 환경 변수를 사용.
+          # echo "::set-output name=TAG::$TIMESTAMP" # 권장 방법은 아니지만, 다른 job에서 사용할 수 있도록 환경 변수를 저장.
 
           # 하나는 대괄호 쓰고 하나는 안썼는데 결과 동일. 둘 다 사용 가능.
-          docker build -t ghcr.io/${{ github.repository_owner }}/my-app:$TIMESTAMP .
-          docker push ghcr.io/${{ github.repository_owner }}/my-app:${TIMESTAMP}
+          docker build -t ghcr.io/${{ github.repository_owner }}/my-app:$TAG .
+          # docker push ghcr.io/${{ github.repository_owner }}/my-app:${TAG}
 
   deploy:
     needs: [build-and-push]
@@ -74,7 +75,7 @@ jobs:
               NEXT_PORT=3030
             fi
 
-            echo "Current port: $CURRENT_PORT, Next port: \$NEXT_PORT"
+            echo "Current port: $CURRENT_PORT, Next port: \$NEXT_PORT" # 왜 NEXT_PORT만 백슬랙시로 감싸야만 하지;;
 
             # Docker Registry 로그인
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PAT }}
