@@ -6,7 +6,24 @@ on:
       - ec2_server
 
 jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build and push Docker image
+        run: |
+          VERSION=$(date +%Y%m%d%H%M%S) # Timestamp 기반으로 버전 관리
+          docker build -t ghcr.io/${{ github.repository_owner }}/my-app:${VERSION} .
+          docker push ghcr.io/${{ github.repository_owner }}/my-app:${VERSION}
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
   deploy:
+    needs: [build-and-push]
     runs-on: ubuntu-latest
     steps:
       - name: Prepare SSH Key
@@ -36,18 +53,6 @@ jobs:
             else
               echo "Nginx configuration file found at ${NGINX_CONF}."
             fi
-
-            # 현재 포트 확인 (upstream backend에서 추출)
-            # CURRENT_PORT=\$(grep -A 1 "upstream backend" "${NGINX_CONF}" | grep -Eo '[0-9]+')
-            grep -A 1 "upstream backend" "${NGINX_CONF}" | grep -Eo '[0-9]+'
-            echo "grep_test1: $(grep -A 1 upstream backend ${NGINX_CONF})"
-            echo "grep_test2: $(grep -A 1 upstream backend ${NGINX_CONF} | grep -Po '\d+')"
-            TEST=\$(ls)
-            echo "TEST: $TEST"
-            TEST=\$(echo "This is a test line")
-            echo "TEST: $TEST"
-            TEST=\$(grep "upstream backend" "${NGINX_CONF}")
-            echo "TEST: $TEST"
 
             # 포트가 제대로 추출되었는지 확인
             if [ -z "$CURRENT_PORT" ]; then
