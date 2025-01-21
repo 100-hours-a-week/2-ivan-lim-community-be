@@ -22,11 +22,11 @@ jobs:
         run: |
           TIMESTAMP=$(date +'%Y%m%d%H%M%S') # Timestamp 기반으로 버전 관리.
           echo "VERSION=$TIMESTAMP" >> $GITHUB_OUTPUT # 다른 job에서도 사용할 수 있도록 환경 변수를 저장.
-          echo "VERSION=$TIMESTAMP" >> $GITHUB_ENV # 해당 job 내에서만 VERSION이라는 환경 변수를 사용.
+          # echo "VERSION=$TIMESTAMP" >> $GITHUB_ENV # 해당 job 내에서만 VERSION이라는 환경 변수를 사용.
           # echo "::set-output name=VERSION::$TIMESTAMP" # 권장 방법은 아니지만, 다른 job에서 사용할 수 있도록 환경 변수를 저장.
 
-          docker build -t ghcr.io/${{ github.repository_owner }}/my-app:${VERSION} .
-          docker push ghcr.io/${{ github.repository_owner }}/my-app:${VERSION}
+          docker build -t ghcr.io/${{ github.repository_owner }}/my-app:$TIMESTAMP .
+          docker push ghcr.io/${{ github.repository_owner }}/my-app:${TIMESTAMP}
 
   deploy:
     needs: [build-and-push]
