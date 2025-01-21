@@ -42,7 +42,8 @@ jobs:
             grep -A 1 "upstream backend" "${NGINX_CONF}" | grep -Eo '[0-9]+'
             echo "grep_test1: $(grep -A 1 upstream backend ${NGINX_CONF})"
             echo "grep_test2: $(grep -A 1 upstream backend ${NGINX_CONF} | grep -Po '\d+')"
-            echo "This is a test line" | grep "test"
+            TEST=$(echo "This is a test line" | grep "test")
+            echo "TEST: $TEST"
             TEST=$(grep "upstream backend" "${NGINX_CONF}")
             echo "TEST: $TEST"
 
