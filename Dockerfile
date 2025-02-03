@@ -17,7 +17,7 @@ COPY . .
 CMD [ "npm", "start" ]  
 
 # 컨테이너가 리스닝할 포트 설정  
-EXPOSE 3030
+EXPOSE 3031
 # docker build -t back:test .
 # docker run -d --name back -p 3030:3030 -v $(pwd):/app -v /app/node_modules back:test
 # 호스트 디렉터리를 마운트하되, node_modules 디렉터리를 제외
