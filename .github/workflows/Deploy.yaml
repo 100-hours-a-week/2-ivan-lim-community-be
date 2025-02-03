@@ -70,21 +70,23 @@ jobs:
             # 다음 포트 계산
             if [ "$CURRENT_PORT" -eq 3030 ]; then
               NEXT_PORT=3031
-              VERSION=GREEN
+              NEXT_VERSION=BLUE
             else
               NEXT_PORT=3030
-              VERSION=BLUE
+              NEXT_VERSION=GREEN
             fi
 
             echo "Current port: $CURRENT_PORT, Next port: \$NEXT_PORT" # 왜 NEXT_PORT만 백슬랙시로 감싸야만 하지;;
-            echo "Deploying version $VERSION to $HOST..."
+            echo "Deploying version $NEXT_VERSION to $HOST..."
 
             # Docker Registry 로그인
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PAT }}
 
             # 새로운 컨테이너 실행
+            echo "Pulling and running the new container..."
             docker pull ghcr.io/${{ github.repository_owner }}/my-app:$TAG
-            docker run -d --name my-app-\${VERSION} -p \${NEXT_PORT}:3000 ghcr.io/${{ github.repository_owner }}/my-app:$TAG
+            echo "Running the new container..."
+            docker run -d --name my-app-\${NEXT_VERSION} -p \${NEXT_PORT}:3000 ghcr.io/${{ github.repository_owner }}/my-app:$TAG
 
             # 헬스체크 수행
             echo "Performing health check on port \${NEXT_PORT}..."
@@ -96,7 +98,7 @@ jobs:
 
             if ! curl -sf http://localhost:\${NEXT_PORT}/health; then
               echo "Health check failed. Rolling back..."
-              docker rm -f my-app-\${VERSION}
+              docker rm -f my-app-\${NEXT_VERSION}
               exit 1
             fi
 
