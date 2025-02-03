@@ -15,6 +15,7 @@ COPY . .
 
 # 애플리케이션 실행  
 CMD [ "npm", "start" ]  
+# CMD [ "tail", "-f" ]  
 
 # 컨테이너가 리스닝할 포트 설정  
 EXPOSE 3030

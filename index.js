@@ -12,6 +12,9 @@ import helmet from 'helmet';
 app.use(helmet());
 // JSON 파싱 미들웨어
 app.use(express.json());
+// Swagger 설정
+import setupSwagger from "./swagger.js";
+setupSwagger(app);
 // URL 인코딩 미들웨어
 app.use(express.urlencoded({ extended: true }));
 // CORS 설정

@@ -4,6 +4,7 @@ import guestRouter from './guest/guestRouter.js';
 import postRouter from './post/postRouter.js';
 import commentRouter from './comment/commentRouter.js';
 import likeRouter from './like/likeRouter.js';
+import specificationRouter from './specification/specificationRouter.js';
 
 const apiRouter = express.Router();
 
@@ -12,5 +13,6 @@ apiRouter.use('/users', userRouter);
 apiRouter.use('/posts', postRouter);
 apiRouter.use('/comments', commentRouter);
 apiRouter.use('/likes', likeRouter);
+apiRouter.use('/specifications', specificationRouter);
 
 export default apiRouter;

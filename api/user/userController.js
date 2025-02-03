@@ -3,6 +3,23 @@ import {nicknameValidChk, passwordValidChk} from '../function/validCheck.js';
 import {isExistNickname, isExistEmail} from '../function/bool.js';
 import bcrypt from 'bcrypt';
 
+/**
+ * @swagger
+ * /api/users/checkNickname:
+ *   get:
+ *     summary: Check if a nickname is available
+ *     parameters:
+ *       - in: query
+ *         name: nickname
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The nickname to check
+ *     responses:
+ *       200:
+ *         description: Nickname check result
+ */
+
 // 닉네임 중복체크 API
 // GET /api/users/checkNickname?nickname={nickname}
 export const checkNickname = async (req, res) => {
@@ -43,6 +60,23 @@ export const checkNickname = async (req, res) => {
     }
 };
 
+/**
+ * @swagger
+ * /api/users/checkEmail:
+ *   get:
+ *     summary: Check if an email is available
+ *     parameters:
+ *       - in: query
+ *         name: email
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The email to check
+ *     responses:
+ *       200:
+ *         description: Email check result
+ */
+
 // 아메알 중복체크 API
 // GET /api/users/checkEmail?email={email}
 export const checkEmail = async (req, res) => {
@@ -81,6 +115,23 @@ export const checkEmail = async (req, res) => {
         });
     }
 };
+
+/**
+ * @swagger
+ * /api/users/{user_id}:
+ *   get:
+ *     summary: Get public user info
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The user ID
+ *     responses:
+ *       200:
+ *         description: User information
+ */
 
 // public 유저 정보 조회 API
 // GET /api/users/{user_id}
@@ -121,6 +172,32 @@ export const getPublicUserInfo = async (req, res) => {
         });
     }
 }
+
+/**
+ * @swagger
+ * /api/users/{user_id}:
+ *   patch:
+ *     summary: Modify user information (nickname, profile)
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The user ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newNickname:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User info modified
+ */
 
 // 회원 정보(닉네임, 프로필) 수정 API
 // PATCH /api/users/{user_id}
@@ -166,9 +243,34 @@ export const memInfoModi = async(req, res) => {
     }
 }
 
+/**
+ * @swagger
+ * /api/users/{user_id}/password:
+ *   patch:
+ *     summary: Modify user password
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The user ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password modified
+ */
+
 // 회원 비밀번호 수정 API
 // PATCH /api/users/{user_id}/password
-
 export const passwordModi = async(req, res) => {
     try {
         const user_id = req.session.userId;
@@ -208,6 +310,23 @@ export const passwordModi = async(req, res) => {
         });
     }
 }
+
+/**
+ * @swagger
+ * /api/users/{user_id}:
+ *   delete:
+ *     summary: Delete user account
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The user ID
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ */
 
 // 회원 탈퇴 API
 // DELETE /api/users/{user_id}
@@ -262,6 +381,15 @@ export const memInfoDel = async(req, res) => {
     }
 }
 
+/**
+ * @swagger
+ * /api/users/logout:
+ *   post:
+ *     summary: Logout user
+ *     responses:
+ *       200:
+ *         description: Logout successful
+ */
 export function logout(req, res) {
     res.clearCookie('connect.sid');
     req.session.destroy();
@@ -270,6 +398,33 @@ export function logout(req, res) {
         data: null
     });
 }
+
+/**
+ * @swagger
+ * /api/users/uploadImg/{user_id}:
+ *   post:
+ *     summary: Upload user profile image
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The user ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Profile image uploaded
+ */
 
 // post /api/users/uploadImg/:user_id
 export const uploadImg = async (req, res) => {
