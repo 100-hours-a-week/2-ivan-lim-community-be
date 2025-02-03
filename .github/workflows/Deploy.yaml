@@ -93,12 +93,12 @@ jobs:
             # 헬스체크 수행
             echo "Performing health check on port \${NEXT_PORT}..."
             for i in {1..10}; do
-              curl -sf http://localhost:\${NEXT_PORT}/health && break
+              curl -sf http://localhost:\${NEXT_PORT} && break
               echo "Health check failed, retrying... (\$i/10)"
-              sleep 7
+              sleep 5
             done
 
-            if ! curl -sf http://localhost:\${NEXT_PORT}/health; then
+            if ! curl -sf http://localhost:\${NEXT_PORT}; then
               echo "Health check failed. Rolling back..."
               docker rm -f my-app-\${NEXT_VERSION}
               exit 1
