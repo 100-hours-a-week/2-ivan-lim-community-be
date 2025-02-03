@@ -86,9 +86,9 @@ jobs:
             echo "docker pull ghcr.io/${{ github.repository_owner }}/my-app:$TAG"
             echo "Pulling and running the new container..."
             docker pull ghcr.io/${{ github.repository_owner }}/my-app:$TAG
-            echo "docker run -d --name my-app-\${NEXT_VERSION} -p \${NEXT_PORT}:3000 ghcr.io/${{ github.repository_owner }}/my-app:$TAG"
+            echo "docker run -d --name my-app-\${NEXT_VERSION} -p \${NEXT_PORT}:3030 ghcr.io/${{ github.repository_owner }}/my-app:$TAG"
             echo "Running the new container..."
-            docker run -d --name my-app-\${NEXT_VERSION} -p \${NEXT_PORT}:3000 ghcr.io/${{ github.repository_owner }}/my-app:$TAG
+            docker run -d --name my-app-\${NEXT_VERSION} -p \${NEXT_PORT}:3030 ghcr.io/${{ github.repository_owner }}/my-app:$TAG
 
             # 헬스체크 수행
             echo "Performing health check on port \${NEXT_PORT}..."
