@@ -83,8 +83,10 @@ jobs:
             docker login ghcr.io -u ${{ github.actor }} -p ${{ secrets.GHCR_PAT }}
 
             # 새로운 컨테이너 실행
+            echo "docker pull ghcr.io/${{ github.repository_owner }}/my-app:$TAG"
             echo "Pulling and running the new container..."
             docker pull ghcr.io/${{ github.repository_owner }}/my-app:$TAG
+            echo "docker run -d --name my-app-\${NEXT_VERSION} -p \${NEXT_PORT}:3000 ghcr.io/${{ github.repository_owner }}/my-app:$TAG"
             echo "Running the new container..."
             docker run -d --name my-app-\${NEXT_VERSION} -p \${NEXT_PORT}:3000 ghcr.io/${{ github.repository_owner }}/my-app:$TAG
 
@@ -93,7 +95,7 @@ jobs:
             for i in {1..10}; do
               curl -sf http://localhost:\${NEXT_PORT}/health && break
               echo "Health check failed, retrying... (\$i/10)"
-              sleep 5
+              sleep 7
             done
 
             if ! curl -sf http://localhost:\${NEXT_PORT}/health; then
