@@ -1,6 +1,6 @@
 /**
  * @swagger
- * /api/users/check-nickname:
+ * /api/users/test:
  *   get:
  *     summary: Check if a nickname is already in use
  *     description: Returns whether the given nickname is already taken.

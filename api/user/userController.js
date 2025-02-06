@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 
 /**
  * @swagger
- * /api/users/checkNickname:
+ * /api/users/nickname:
  *   get:
  *     summary: Check if a nickname is available
  *     parameters:
@@ -21,10 +21,9 @@ import bcrypt from 'bcrypt';
  */
 
 // 닉네임 중복체크 API
-// GET /api/users/checkNickname?nickname={nickname}
+// GET /api/users/nickname?nickname={nickname}
 export const checkNickname = async (req, res) => {
     try {
-        
         const nickname = req.query.nickname;
         if(!nickname)
         {
@@ -62,7 +61,7 @@ export const checkNickname = async (req, res) => {
 
 /**
  * @swagger
- * /api/users/checkEmail:
+ * /api/users/email:
  *   get:
  *     summary: Check if an email is available
  *     parameters:
@@ -78,7 +77,7 @@ export const checkNickname = async (req, res) => {
  */
 
 // 아메알 중복체크 API
-// GET /api/users/checkEmail?email={email}
+// GET /api/users/email?email={email}
 export const checkEmail = async (req, res) => {
     try {
         const email = req.query.email;
@@ -401,7 +400,7 @@ export function logout(req, res) {
 
 /**
  * @swagger
- * /api/users/uploadImg/{user_id}:
+ * /api/users/uploadImg:
  *   post:
  *     summary: Upload user profile image
  *     parameters:
@@ -426,7 +425,7 @@ export function logout(req, res) {
  *         description: Profile image uploaded
  */
 
-// post /api/users/uploadImg/:user_id
+// post /api/users/uploadImg
 export const uploadImg = async (req, res) => {
     // user img에 path 추가
     const query = `UPDATE users SET profileImgPath = ? WHERE id = ?;`;
