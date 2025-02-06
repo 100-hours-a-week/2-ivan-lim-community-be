@@ -107,7 +107,7 @@ jobs:
             fi
 
             # Nginx 설정 업데이트
-            sudo sed -i "s/server localhost:${CURRENT_PORT}/server localhost:\${NEXT_PORT}/" ${NGINX_CONF}
+            sudo sed -i "s/server localhost:${CURRENT_PORT}/server localhost:\${NEXT_PORT}/" ${NGINX_CONF} # 왜 여기선 ${CURRENT_PORT} 앞의 백슬래시를 빼니 되는 것인가;;
             sudo nginx -s reload
 
             # 이전 컨테이너 정리
