@@ -44,7 +44,7 @@ jobs:
           HOST=${{ secrets.EC2_HOST }}
           USER=${{ secrets.EC2_USER }}
           NGINX_CONF=${{ vars.NGINX_CONF }}
-          # NGINX_CONF=/etc/nginx/sites-enabled/nginx.conf
+          # NGINX_CONF=/etc/nginx/nginx.conf
           CURRENT_PORT=$(ssh -o StrictHostKeyChecking=no -i key.pem $USER@$HOST "grep -A 1 'upstream backend' ${NGINX_CONF} | grep -Eo '[0-9]+'")
           TAG="${{ needs.build-and-push.outputs.TAG }}" # 얜 또 따옴표가 있어야 된다;;
 
@@ -70,9 +70,11 @@ jobs:
             # 다음 포트 계산
             if [ "$CURRENT_PORT" -eq 3030 ]; then
               NEXT_PORT=3031
+              CURRENT_VERSION=GREEN
               NEXT_VERSION=BLUE
             else
               NEXT_PORT=3030
+              CURRENT_VERSION=BLUE
               NEXT_VERSION=GREEN
             fi
 
@@ -86,9 +88,9 @@ jobs:
             echo "docker pull ghcr.io/${{ github.repository_owner }}/my-app:$TAG"
             echo "Pulling and running the new container..."
             docker pull ghcr.io/${{ github.repository_owner }}/my-app:$TAG
-            echo "docker run -d --name my-app-\${NEXT_VERSION} -p \${NEXT_PORT}:3030 ghcr.io/${{ github.repository_owner }}/my-app:$TAG"
+            echo "docker run -d --name back-\${NEXT_VERSION} -p \${NEXT_PORT}:3030 ghcr.io/${{ github.repository_owner }}/my-app:$TAG"
             echo "Running the new container..."
-            docker run -d --name my-app-\${NEXT_VERSION} -p \${NEXT_PORT}:3030 ghcr.io/${{ github.repository_owner }}/my-app:$TAG
+            docker run -d --name back-\${NEXT_VERSION} -p \${NEXT_PORT}:3030 ghcr.io/${{ github.repository_owner }}/my-app:$TAG
 
             # 헬스체크 수행
             echo "Performing health check on port \${NEXT_PORT}..."
@@ -100,15 +102,15 @@ jobs:
 
             if ! curl -sf http://localhost:\${NEXT_PORT}; then
               echo "Health check failed. Rolling back..."
-              docker rm -f my-app-\${NEXT_VERSION}
+              docker rm -f back-\${NEXT_VERSION}
               exit 1
             fi
 
             # Nginx 설정 업데이트
-            sudo sed -i "s/proxy_pass http:\/\/localhost:\${CURRENT_PORT}/proxy_pass http:\/\/localhost:\${NEXT_PORT}/" ${NGINX_CONF}
+            sudo sed -i "s/server localhost:\${CURRENT_PORT}/server localhost:\${NEXT_PORT}/" ${NGINX_CONF}
             sudo nginx -s reload
 
             # 이전 컨테이너 정리
-            docker rm -f my-app-\${CURRENT_PORT}
+            docker rm -f back-\${CURRENT_VERSION}
             docker system prune -a -f
           EOF
