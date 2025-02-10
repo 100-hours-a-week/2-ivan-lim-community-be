@@ -52,6 +52,10 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i key.pem $USER@$HOST << EOF
             echo "Starting deployment..."
 
+            echo "Pulling latest code from Git..."
+            cd /home/ubuntu/kakao/2-ivan-lim-community-be # 레포지토리 위치로 이동
+            git pull origin ec2_server  # 원하는 브랜치로 최신 코드 가져오기
+
             # Nginx 설정 파일 확인
             if [ ! -f "${NGINX_CONF}" ]; then
               echo "Error: Nginx configuration file not found at ${NGINX_CONF}."
